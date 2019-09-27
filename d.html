@@ -20,7 +20,12 @@
     />
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
-
+    <link
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous"
+    />
     <style>
       .group {
         width: 310px;
@@ -45,6 +50,7 @@
       $(function() {
         let timers = ["A", "B", "C", "D"];
         $(".timerContainer").draggable({
+          cancel: "#placeholder",
           helper: "clone",
           snap: true,
           snapMode: "inner",
@@ -69,8 +75,13 @@
               draggedTimer = droppedDiv.children(); //original drag children
             // console.log("dropped on Parent", droppedOnDivParent);
             console.log("Dropped Div Parent", droppedDivParent);
-
             if (droppedOnDivParent != droppedDivParent) {
+              //if droppedOnDiv is placeholder then append before
+              if (droppedOnDiv.attr("id") == "placeholder") {
+                droppedOnDiv.before(droppedDiv);
+                return;
+              }
+
               // alert("coming from different group list");
               droppedDiv.appendTo(listToAppend);
               return;
@@ -224,6 +235,11 @@
             <div class=" p-0 timerContainer">
               <p class="timer p-5 m-0 border border-dark" id="D">
                 D
+              </p>
+            </div>
+            <div class="  timerContainer" id="placeholder">
+              <p class="timer placeholder m-0 border border-dark ">
+                <button><i class="fa fa-plus"></i> Add Timer</button>
               </p>
             </div>
           </div>
