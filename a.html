@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>
+      ul > li {
+        list-style: none;
+      }
+      .timer {
+        height: 80px;
+      }
+      .group {
+        border-style: solid;
+        border-width: 5px;
+      }
+      .placeholder {
+        background-color: blue;
+        height: 100px;
+      }
+    </style>
+    <script>
+      $().ready(() => {
+        $("form :submit").click(e => {
+          e.preventDefault();
+        });
+        // let group = createGroup($("#noOfRows").val(), $("#noOfCols").val());
+        let list = [];
+        let group = createGroup(2, 3);
+        list.push(group);
+        // $("#col1").html(group);
+        var count = 0;
+        group = createGroup(2, 3);
+        list.push(group);
+        let ulList = createList(list);
+
+        $("#listA").append(ulList);
+        $("#listB").append(ulList);
+
+        // $(".droppable").droppable();
+        // $(".sortable").sortable();
+        // $(".sortable").disableSelection();
+        // $(".group").draggable();
+        $("#resizable").resizable();
+        // $("#listA, #listB, #listC,#listD").sortable({
+        //   helper: "clone",
+        //   placeholder: "placeholder",
+        //   forcePlaceholderSize: false,
+        //   dropOnEmpty: true,
+        //   revert: true,
+        //   connectWith: ".sortable",
+        //   tolerance: "pointer",
+        //   cursor: "move",
+        //   start: function(evt, ui) {
+        //     // creates a temporary attribute on the element with the old index
+        //     $(this).attr("data-sourcelist", ui.item.parent().attr("id"));
+        //   },
+        //   stop: function(event, ui) {
+        //     if (
+        //       $(this).attr("data-sourcelist") === ui.item.parent().attr("id")
+        //     ) {
+        //       //   $(this).sortable("cancel");
+        //       //   alert(
+        //       //     "" +
+        //       //       ui.item.attr("id") +
+        //       //       " : " +
+        //       //       ui.item.context.childNodes[0].id
+        //       //   );
+        //     }
+        //     console.log(
+        //       "Dropped in:" + ui.item.parent().attr("id"),
+        //       ui.item.parent().sortable("toArray")
+        //     );
+        //   }
+        // });
+
+        function getCount() {
+          count++;
+          return count;
+        }
+
+        function createList(list) {
+          //   list.map(group => `<li id='ul_item_${getCount()}'>${group} </li>`);
+          let c = 1;
+          let listItems = "";
+          list.forEach(group => {
+            listItems += `<li id='ul_item_${c}'>${group} </li>`;
+            c++;
+          });
+
+          //   let ul = `<ul class='sortable'>${listItems}</ul>`;
+          return listItems;
+        }
+        var totalGroups = 0;
+        function getTotalGroups() {
+          totalGroups++;
+          return totalGroups;
+        }
+        function createGroup(rows, cols) {
+          let groupRows = "";
+          for (let i = 0; i < rows; i++) {
+            groupRows += "<div class='row mb-1'>";
+            let colDivs = "";
+            for (let col = 0; col < cols; col++) {
+              colDivs += `<div class='col timer'>${col + 1}</div>`;
+            }
+            groupRows += colDivs + "</div>";
+          }
+          let groupWrapper = `<div class="card-body border p-2 container">${groupRows}</div>`;
+
+          let groupDiv = `<div class='group mb-1' id='${getTotalGroups()}' class="ui-widget-content"> <h5 class='card-header'>Group Grid </h5> ${groupWrapper}</div>`;
+          return groupDiv;
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <!-- <div class="container-fluid vh-100 vw-100" id="main">
+      <form action="#">
+        <label for="">Rows</label>
+        <input type="text" name="rows" id="noOfRows" />
+        <label for="">Cols</label>
+        <input type="text" name="cols" id="noOfCols" />
+        <input type="submit" />
+      </form>
+
+      <div class="row">
+        <div class="col-3  border border-dark droppable" id="col1">
+          <ul class="sortable" id="listA"></ul>
+        </div>
+        <div class="col-3  border border-dark droppable" id="col2">
+          <ul class="sortable vh-100" id="listB"></ul>
+        </div>
+        <div class="col-3  border border-dark droppable" id="col2">
+          <ul class="sortable vh-100" id="listC"></ul>
+        </div>
+      </div>
+    </div> -->
+    <div class="col1 timer group" id="resizable">hsjng</div>
+  </body>
+</html>

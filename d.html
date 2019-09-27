@@ -1,0 +1,234 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>jQuery UI Resizable - Default functionality</title>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+
+    <style>
+      .group {
+        width: 310px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+
+      .group h3 {
+        text-align: center;
+        margin: 0;
+        height: 30px;
+      }
+
+      .timer {
+        height: 150px;
+        width: 150px;
+      }
+    </style>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+      $(function() {
+        let timers = ["A", "B", "C", "D"];
+        $(".timerContainer").draggable({
+          helper: "clone",
+          snap: true,
+          snapMode: "inner",
+          snapTolerance: 32,
+          revert: "invalid"
+        });
+
+        $(".timerContainer").droppable({
+          hoverClass: "ui-state-highlight",
+          drop: function(event, ui) {
+            let listToAppend = $(this).parents(".timersList");
+            let droppedDiv = $(ui.draggable);
+            let droppedOnDiv = $(this);
+            let droppedOnDivParent = $(this)
+              .parents(".group")
+              .attr("id");
+
+            let droppedDivParent = $(ui.draggable)
+              .parents(".group")
+              .attr("id");
+            var targetTimer = droppedOnDiv.children(), //original drop children
+              draggedTimer = droppedDiv.children(); //original drag children
+            console.log("dropped on Parent", droppedOnDivParent);
+            console.log("Dropped Div Parent", droppedDivParent);
+
+            if (droppedOnDivParent != droppedDivParent) {
+              // alert("coming from different group list");
+              droppedDiv.appendTo(listToAppend);
+              return;
+            }
+            if (targetTimer.length > 0) {
+              targetTimer.appendTo(droppedDiv);
+            }
+            console.log(draggedTimer);
+            draggedTimer.appendTo(droppedOnDiv);
+            console.log(timers.find(timer => timer == draggedTimer[0].id));
+          }
+        });
+
+        $(".group").draggable({
+          stop: function(event, ui) {
+            if (isOverlap(event, ui)) {
+              $(this).animate(ui.originalPosition, "slow");
+              return;
+            }
+          }
+        });
+
+        $(".group").resizable({
+          handles: "se,e",
+          ghost: true,
+          autoHide: true,
+
+          stop: function(event, ui) {
+            $(this).css("height", getHeight(event, ui));
+            $(this).css("max-width", getMaxWidth(event, ui));
+            $(this).css("width", getWidth(event, ui));
+            console.log(ui.element.context.children[0].children[1].children);
+            // if (isOverlap(event, ui)) {
+            //   $(this).animate(ui.originalPosition, "slow");
+            //   return;
+            // }
+          }
+        });
+        function checkOverLapping(rect1, rect2) {
+          return !(
+            rect1.right < rect2.left ||
+            rect1.left > rect2.right ||
+            rect1.bottom < rect2.top ||
+            rect1.top > rect2.bottom
+          );
+        }
+
+        function isOverlap(event, ui) {
+          let draggedGroup = ui.helper[0];
+          let draggedRect = draggedGroup.getBoundingClientRect();
+          let draggedId = draggedGroup.id;
+          let allRects = document.getElementsByClassName("group");
+          for (let index = 0; index < allRects.length; index++) {
+            const id = allRects[index].id;
+            if (id == draggedId) continue;
+            const rect = allRects[index].getBoundingClientRect();
+            console.log(rect);
+            if (checkOverLapping(rect, draggedRect)) return true;
+          }
+          return false;
+
+          // var overlap = !(
+          //   rect1.right < rect2.left ||
+          //   rect1.left > rect2.right ||
+          //   rect1.bottom < rect2.top ||
+          //   rect1.top > rect2.bottom
+          // );
+          // console.log(overlap);
+        }
+        function getHeight(event, ui) {
+          // console.log(ui);
+          return ui.element.context.childNodes[1].clientHeight;
+        }
+
+        function getWidth(event, ui) {
+          // let oldWidth = +ui.originalSize.width;
+          let newWidth = +ui.size.width;
+          // let timerWidth = 150;
+          // if (oldWidth > newWidth) {
+          //   return oldWidth - timerWidth + "px";
+          // } else if (oldWidth < newWidth) {
+          //   if (oldWidth + timerWidth > newWidth) {
+          //     return oldWidth + "px";
+          //   } else {
+          //     return newWidth + "px";
+          //   }
+          // }
+          return newWidth;
+        }
+        function getMaxWidth(event, ui) {
+          let childs =
+            ui.element.context.childNodes[1].childNodes[3].childElementCount;
+          let width = childs * 150 + 10;
+          return width;
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div class="row">
+      <div id="1" class="group" class="ui-widget-content">
+        <div class="bg-info">
+          <h3 class="groupHeader ui-widget-header d-flex align-items-start">
+            Group 1
+          </h3>
+          <div class="timersList d-flex flex-wrap">
+            <div id="Awrapper" class="p-0 timerContainer">
+              <p class="timer p-5 m-0 border border-dark" id="A">
+                A
+              </p>
+            </div>
+            <div id="BWrapper" class="p-0 timerContainer">
+              <p class="timer p-5 m-0 border border-dark" id="B">
+                B
+              </p>
+            </div>
+            <div class=" p-0 timerContainer">
+              <p class="timer p-5 m-0 border border-dark" id="C">
+                C
+              </p>
+            </div>
+            <div class=" p-0 timerContainer">
+              <p class="timer p-5 m-0 border border-dark" id="D">
+                D
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="3" class="group" class="ui-widget-content">
+        <div class="bg-info">
+          <h3 class="groupHeader ui-widget-header d-flex align-items-start">
+            Group 3
+          </h3>
+          <div class="timersList d-flex flex-wrap">
+            <div id="Awrapper" class="p-0 timerContainer">
+              <p class="timer p-5 m-0 border border-dark" id="A">
+                A
+              </p>
+            </div>
+            <div id="BWrapper" class="p-0 timerContainer">
+              <p class="timer p-5 m-0 border border-dark" id="B">
+                B
+              </p>
+            </div>
+            <div class=" p-0 timerContainer">
+              <p class="timer p-5 m-0 border border-dark" id="C">
+                C
+              </p>
+            </div>
+            <div class=" p-0 timerContainer">
+              <p class="timer p-5 m-0 border border-dark" id="D">
+                D
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
