@@ -63,8 +63,7 @@
           {
             id: "g1",
             label: "Group 1",
-            left: 10,
-            top: 100,
+            position: { top: 10, left: 100 },
             width: 310,
             height: 310,
             timers: [1, 5, 3]
@@ -72,6 +71,7 @@
           {
             id: "g2",
             label: "Group 2",
+            position: { top: 100, left: 360 },
             left: 360,
             top: 100,
             width: 310,
@@ -81,8 +81,8 @@
           {
             id: "g3",
             label: "Group 3",
-            left: 660,
-            top: 100,
+            position: { top: 100, left: 660 },
+
             width: 310,
             height: 310,
             timers: [5, 2, 1]
@@ -94,7 +94,7 @@
           let groupDiv = document.createElement("div");
           groupDiv.classList = "group card ui-widget-content";
           groupDiv.id = group.id;
-          groupDiv.style = `top: ${group.top}px;left:${group.left}px; width: ${group.width}px; height: ${group.height}px;`;
+          groupDiv.style = `top: ${group.position.top}px;left:${group.position.left}px; width: ${group.width}px; height: ${group.height}px;`;
 
           let groupHeader = document.createElement("div");
           groupHeader.setAttribute("class", "card-header");
@@ -248,11 +248,16 @@
         $(".timerContainer").droppable(droppableOptions);
 
         $(".group").draggable({
+          cursor: "move",
           stop: function(event, ui) {
             if (isOverlap(event, ui)) {
               $(this).animate(ui.originalPosition, "slow");
               return;
             }
+            let id = $(this).attr("id");
+            let group = groups.find(g => g.id == id);
+            group.position = $(this).position();
+            console.log(group);
           }
         });
 
@@ -286,7 +291,6 @@
             const id = allRects[index].id;
             if (id == draggedId) continue;
             const rect = allRects[index].getBoundingClientRect();
-            console.log(rect);
             if (checkOverLapping(rect, draggedRect)) return true;
           }
           return false;
@@ -314,13 +318,6 @@
           let width = childs * 150 + 10;
           return width;
         }
-
-        // $(".group")
-        //   .find(".timersList")
-        //   .children()
-        //   .one("DOMNodeRemoved", function() {
-        //     console.log($(this).parents(".group"));
-        //   });
       });
     </script>
   </head>
