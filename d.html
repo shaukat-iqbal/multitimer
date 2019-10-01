@@ -60,7 +60,7 @@
           {
             id: "g1",
             label: "Group 1",
-            left: 100,
+            left: 10,
             top: 100,
             width: 310,
             height: 310,
@@ -69,11 +69,20 @@
           {
             id: "g2",
             label: "Group 2",
-            left: 400,
+            left: 360,
             top: 100,
             width: 310,
             height: 310,
             timers: [1, 5, 3]
+          },
+          {
+            id: "g3",
+            label: "Group 3",
+            left: 660,
+            top: 100,
+            width: 310,
+            height: 310,
+            timers: [5, 2, 1]
           }
         ];
 
@@ -101,8 +110,8 @@
           let placeholder = document.createElement("div");
           placeholder.className = "timerContainer";
           placeholder.id = "placeholder";
-          placeholder.innerHTML = `<p class=" timer p-5 m-0 border border-dark ">
-                <button><i class="fa fa-plus"></i> Add Timer</button>
+          placeholder.innerHTML = `<p class=" timer p-3 m-0 border border-dark ">
+                <button class="addTimer btn btn-info btn-sm rounded-pill" ><i class="fa fa-plus"></i> Add Timer</button>
               </p>`;
           timersList.appendChild(placeholder);
           $(".container .row").append(groupDiv);
@@ -115,16 +124,15 @@
               .outerHeight();
           groupDiv.style = `height:${newHeight};`;
         });
-
-        $(".timerContainer").draggable({
+        let draggableOptions = {
           cancel: "#placeholder",
           helper: "clone",
           snap: true,
           snapMode: "inner",
           snapTolerance: 32,
           revert: "invalid"
-        });
-        $(".timerContainer").droppable({
+        };
+        let droppableOptions = {
           hoverClass: "ui-state-highlight",
           over: function(event, ui) {
             let targetParentId = $(this)
@@ -139,11 +147,10 @@
               }
             }
           },
+
           drop: function(event, ui) {
-            let listToAppend = $(this).parents(".timersList");
             let droppedDiv = $(ui.draggable);
             let droppedOnDiv = $(this);
-            let droppedOnDivParent = droppedOnDiv.parents(".group");
             let droppedDivParent = droppedDiv.parents(".group");
             let droppedOnDivParentId = $(this)
               .parents(".group")
@@ -152,41 +159,25 @@
             let droppedDivParentId = $(ui.draggable)
               .parents(".group")
               .attr("id");
+
             var targetTimer = droppedOnDiv.children(), //original drop children
               draggedTimer = droppedDiv.children(); //original drag children
 
             // if target and dragged timer are not of same group
             if (droppedOnDivParentId != droppedDivParentId) {
-              //if droppedOnDiv is placeholder then append before otherwise revert
+              //if target is placeholder then append before otherwise revert
               if (droppedOnDiv.attr("id") == "placeholder") {
                 //apend before target div
                 droppedOnDiv.before(droppedDiv);
+                let groupHeight = getGroupHeight($(this).parents(".group"));
                 $(this)
                   .parents(".group")
-                  .css(
-                    "height",
-                    $(this)
-                      .parents(".group")
-                      .find(".card-header")
-                      .outerHeight() +
-                      $(this)
-                        .parents(".group")
-                        .find(".timersList")
-                        .outerHeight()
-                  );
+                  .css("height", groupHeight);
+
                 droppedDivParent.css(
                   "height",
-                  droppedDivParent.find(".card-header").outerHeight() +
-                    droppedDivParent.find(".timersList").outerHeight()
+                  getGroupHeight(droppedDivParent)
                 );
-                console.log(
-                  droppedDivParent.find(".card-header").outerHeight() +
-                    droppedDivParent.find(".timersList").outerHeight()
-                );
-                // droppedOnDiv.css(
-                //   "height",
-
-                // );
               } else {
                 $(ui.draggable).draggable({ revert: "valid" });
               }
@@ -203,7 +194,36 @@
               // console.log(timers.find(timer => timer == draggedTimer[0].id));
             }
           }
+        };
+
+        $(".addTimer").click(function() {
+          let groupId = $(this)
+            .parents(".group")
+            .attr("id");
+          let group = groups.find(g => g.id == groupId);
+          console.log(groupId);
+          let id = timers.length;
+          let newTimer = { id: id, label: "Timer " + id };
+          group.timers.push(id);
+          timers.push(newTimer);
+          let timerContainer = document.createElement("div");
+          timerContainer.classList =
+            "p-0 timerContainer ui-draggable ui-draggable-handle ui-droppable";
+          timerContainer.innerHTML = `<div class="timer p-5 m-0 border border-dark" id="${newTimer.id}">${newTimer.label}</div>`;
+          let groupDiv = $("#" + groupId);
+          groupDiv.find("#placeholder").before(timerContainer);
+
+          let newHeight = getGroupHeight(groupDiv);
+          // groupDiv.find(".card-header").outerHeight() +
+          // groupDiv.find(".timersList").outerHeight();
+          groupDiv.css("height", newHeight);
+          groupDiv.find(".timerContainer").droppable(droppableOptions);
+          groupDiv.find(".timerContainer").draggable(draggableOptions);
         });
+
+        $(".timerContainer").draggable(draggableOptions);
+        $(".timerContainer").droppable(droppableOptions);
+
         $(".group").draggable({
           stop: function(event, ui) {
             if (isOverlap(event, ui)) {
@@ -221,11 +241,7 @@
           stop: function(event, ui) {
             $(this).css("height", getHeight(event, ui));
             $(this).css("max-width", getMaxWidth(event, ui));
-            $(this).css("width", getWidth(event, ui));
-            // if (isOverlap(event, ui)) {
-            //   $(this).animate(ui.originalPosition, "slow");
-            //   return;
-            // }
+            $(this).css("width", getGroupWidth(event, ui));
           }
         });
 
@@ -253,6 +269,13 @@
           return false;
         }
 
+        function getGroupHeight(group) {
+          return (
+            group.find(".card-header").outerHeight() +
+            group.find(".timersList").outerHeight()
+          );
+        }
+
         function getHeight(event, ui) {
           return (
             $(ui.element)
@@ -263,30 +286,22 @@
               .outerHeight()
           );
         }
-        $(".group")
-          .find(".timersList")
-          .children()
-          .one("DOMNodeRemoved", function() {
-            console.log($(this).parents(".group"));
-          });
 
-        function getWidth(event, ui) {
+        // $(".group")
+        //   .find(".timersList")
+        //   .children()
+        //   .one("DOMNodeRemoved", function() {
+        //     console.log($(this).parents(".group"));
+        //   });
+
+        function getGroupWidth(event, ui) {
           // let oldWidth = +ui.originalSize.width;
           let newWidth = +ui.size.width;
-          // let timerWidth = 150;
-          // if (oldWidth > newWidth) {
-          //   return oldWidth - timerWidth + "px";
-          // } else if (oldWidth < newWidth) {
-          //   if (oldWidth + timerWidth > newWidth) {
-          //     return oldWidth + "px";
-          //   } else {
-          //     return newWidth + "px";
-          //   }
-          // }
-          return newWidth;
+          let noOfTimers = Math.floor(newWidth / 150);
+          return noOfTimers * 150 + 10 + "px";
         }
+
         function getMaxWidth(event, ui) {
-          console.log(ui.element);
           let childs = $("#" + ui.element[0].id)
             .find(".timersList")
             .children()
