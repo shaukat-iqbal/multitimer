@@ -48,7 +48,74 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
       $(function() {
-        let timers = ["A", "B", "C", "D"];
+        let timers = [
+          { id: 1, label: "Timer 1" },
+          { id: 2, label: "Timer 2" },
+          { id: 3, label: "Timer 3" },
+          { id: 4, label: "Timer 4" },
+          { id: 5, label: "Timer 5" }
+        ];
+
+        let groups = [
+          {
+            id: "g1",
+            label: "Group 1",
+            left: 100,
+            top: 100,
+            width: 310,
+            height: 310,
+            timers: [1, 5, 3]
+          },
+          {
+            id: "g2",
+            label: "Group 2",
+            left: 400,
+            top: 100,
+            width: 310,
+            height: 310,
+            timers: [1, 5, 3]
+          }
+        ];
+
+        groups.forEach(group => {
+          let groupDiv = document.createElement("div");
+          groupDiv.classList = "group card ui-widget-content";
+          groupDiv.id = group.id;
+          groupDiv.style = `top: ${group.top}px;left:${group.left}px; width: ${group.width}px; height: ${group.height}px;`;
+
+          let groupHeader = document.createElement("div");
+          groupHeader.setAttribute("class", "card-header");
+          groupHeader.innerHTML = `<h3>${group.label}</h3>`;
+          groupDiv.appendChild(groupHeader);
+
+          let timersList = document.createElement("div");
+          timersList.classList = "timersList  p-0 d-flex flex-wrap";
+          groupDiv.appendChild(timersList);
+          group.timers.forEach(timerId => {
+            let timerContainer = document.createElement("div");
+            timerContainer.classList = "p-0 timerContainer";
+            let timerObject = timers.find(t => t.id === timerId);
+            timerContainer.innerHTML = `<div class="timer p-5 m-0 border border-dark" id="${timerObject.id}">${timerObject.label}</div>`;
+            timersList.appendChild(timerContainer);
+          });
+          let placeholder = document.createElement("div");
+          placeholder.className = "timerContainer";
+          placeholder.id = "placeholder";
+          placeholder.innerHTML = `<p class=" timer p-5 m-0 border border-dark ">
+                <button><i class="fa fa-plus"></i> Add Timer</button>
+              </p>`;
+          timersList.appendChild(placeholder);
+          $(".container .row").append(groupDiv);
+          let newHeight =
+            $("#" + group.id)
+              .find(".card-header")
+              .outerHeight() +
+            $("#" + group.id)
+              .find(".timersList")
+              .outerHeight();
+          groupDiv.style = `height:${newHeight};`;
+        });
+
         $(".timerContainer").draggable({
           cancel: "#placeholder",
           helper: "clone",
@@ -76,6 +143,8 @@
             let listToAppend = $(this).parents(".timersList");
             let droppedDiv = $(ui.draggable);
             let droppedOnDiv = $(this);
+            let droppedOnDivParent = droppedOnDiv.parents(".group");
+            let droppedDivParent = droppedDiv.parents(".group");
             let droppedOnDivParentId = $(this)
               .parents(".group")
               .attr("id");
@@ -92,6 +161,32 @@
               if (droppedOnDiv.attr("id") == "placeholder") {
                 //apend before target div
                 droppedOnDiv.before(droppedDiv);
+                $(this)
+                  .parents(".group")
+                  .css(
+                    "height",
+                    $(this)
+                      .parents(".group")
+                      .find(".card-header")
+                      .outerHeight() +
+                      $(this)
+                        .parents(".group")
+                        .find(".timersList")
+                        .outerHeight()
+                  );
+                droppedDivParent.css(
+                  "height",
+                  droppedDivParent.find(".card-header").outerHeight() +
+                    droppedDivParent.find(".timersList").outerHeight()
+                );
+                console.log(
+                  droppedDivParent.find(".card-header").outerHeight() +
+                    droppedDivParent.find(".timersList").outerHeight()
+                );
+                // droppedOnDiv.css(
+                //   "height",
+
+                // );
               } else {
                 $(ui.draggable).draggable({ revert: "valid" });
               }
@@ -122,7 +217,7 @@
           handles: "se,e",
           ghost: true,
           autoHide: true,
-          minWidth: 150,
+          minWidth: 160,
           stop: function(event, ui) {
             $(this).css("height", getHeight(event, ui));
             $(this).css("max-width", getMaxWidth(event, ui));
@@ -133,6 +228,7 @@
             // }
           }
         });
+
         function checkOverLapping(rect1, rect2) {
           return !(
             rect1.right < rect2.left ||
@@ -155,18 +251,17 @@
             if (checkOverLapping(rect, draggedRect)) return true;
           }
           return false;
-
-          // var overlap = !(
-          //   rect1.right < rect2.left ||
-          //   rect1.left > rect2.right ||
-          //   rect1.bottom < rect2.top ||
-          //   rect1.top > rect2.bottom
-          // );
-          // console.log(overlap);
         }
+
         function getHeight(event, ui) {
-          // console.log(ui);
-          return ui.element.context.childNodes[1].clientHeight;
+          return (
+            $(ui.element)
+              .find(".card-header")
+              .outerHeight() +
+            $(ui.element)
+              .find(".timersList")
+              .outerHeight()
+          );
         }
         $(".group")
           .find(".timersList")
@@ -205,13 +300,11 @@
   <body>
     <div class="container">
       <div class="row">
-        <div id="1" class="group card" class="ui-widget-content">
-          <div class="card">
-            <div class="card-header">
-              <h3>
-                Group 1
-              </h3>
-            </div>
+        <!-- <div id="1" class="group card" class="ui-widget-content">
+          <div class="card-header">
+            <h3>
+              Group 1
+            </h3>
           </div>
           <div class="timersList card-body p-0 d-flex flex-wrap">
             <div class="p-0 timerContainer">
@@ -275,7 +368,7 @@
               </p>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </body>
