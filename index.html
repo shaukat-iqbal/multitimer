@@ -32,7 +32,9 @@
         margin-right: 10px;
         margin-bottom: 10px;
       }
-
+      body {
+        min-width: vw-100;
+      }
       .group h3 {
         text-align: center;
         margin: 0;
@@ -86,6 +88,7 @@
           }
         ];
 
+        //--------rendering all group
         groups.forEach(group => {
           let groupDiv = document.createElement("div");
           groupDiv.classList = "group card ui-widget-content";
@@ -115,15 +118,11 @@
               </p>`;
           timersList.appendChild(placeholder);
           $(".container .row").append(groupDiv);
-          let newHeight =
-            $("#" + group.id)
-              .find(".card-header")
-              .outerHeight() +
-            $("#" + group.id)
-              .find(".timersList")
-              .outerHeight();
+          let newHeight = getGroupHeight($("#" + group.id));
+
           groupDiv.style = `height:${newHeight};`;
         });
+
         let draggableOptions = {
           cancel: "#placeholder",
           helper: "clone",
@@ -132,6 +131,7 @@
           snapTolerance: 32,
           revert: "invalid"
         };
+
         let droppableOptions = {
           hoverClass: "ui-state-highlight",
           over: function(event, ui) {
@@ -239,7 +239,7 @@
           autoHide: true,
           minWidth: 160,
           stop: function(event, ui) {
-            $(this).css("height", getHeight(event, ui));
+            $(this).css("height", getGroupHeight($(ui.element)));
             $(this).css("max-width", getMaxWidth(event, ui));
             $(this).css("width", getGroupWidth(event, ui));
           }
@@ -276,24 +276,6 @@
           );
         }
 
-        function getHeight(event, ui) {
-          return (
-            $(ui.element)
-              .find(".card-header")
-              .outerHeight() +
-            $(ui.element)
-              .find(".timersList")
-              .outerHeight()
-          );
-        }
-
-        // $(".group")
-        //   .find(".timersList")
-        //   .children()
-        //   .one("DOMNodeRemoved", function() {
-        //     console.log($(this).parents(".group"));
-        //   });
-
         function getGroupWidth(event, ui) {
           // let oldWidth = +ui.originalSize.width;
           let newWidth = +ui.size.width;
@@ -309,6 +291,13 @@
           let width = childs * 150 + 10;
           return width;
         }
+
+        // $(".group")
+        //   .find(".timersList")
+        //   .children()
+        //   .one("DOMNodeRemoved", function() {
+        //     console.log($(this).parents(".group"));
+        //   });
       });
     </script>
   </head>
