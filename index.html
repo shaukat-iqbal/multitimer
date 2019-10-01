@@ -168,9 +168,24 @@
             if (droppedOnDivParentId != droppedDivParentId) {
               //if target is placeholder then append before otherwise revert
               if (droppedOnDiv.attr("id") == "placeholder") {
+                $(ui.draggable).draggable({ revert: "invalid" });
                 //apend before target div
                 droppedOnDiv.before(droppedDiv);
+
+                // Move the timer to target group
+                let targetGroup = groups.find(
+                  g => g.id == droppedOnDivParentId
+                );
+                let group2 = groups.find(g => g.id == droppedDivParentId);
+
+                targetGroup.timers.push(+draggedTimer.attr("id"));
+                //remove the timer from previous group
+                let indexToRemove = group2.timers.findIndex(
+                  t => t == draggedTimer.attr("id")
+                );
+                group2.timers.splice(indexToRemove, 1);
                 let groupHeight = getGroupHeight($(this).parents(".group"));
+
                 $(this)
                   .parents(".group")
                   .css("height", groupHeight);
@@ -185,13 +200,20 @@
             } else {
               //same group
               //stop exchanging placeholder and other div
-              if (droppedOnDiv.attr("id") == "placeholder") {
-                return;
+              if (droppedOnDiv.attr("id") != "placeholder") {
+                if (targetTimer.length > 0) {
+                  targetTimer.appendTo(droppedDiv);
+                }
+                draggedTimer.appendTo(droppedOnDiv);
+                let group = groups.find(g => g.id === droppedDivParentId);
+                timersList = group.timers;
+                let a = timersList.findIndex(t => t == targetTimer.attr("id"));
+                let b = timersList.findIndex(t => t == draggedTimer.attr("id"));
+                let temp = timersList[a];
+                timersList[a] = timersList[b];
+                timersList[b] = temp;
+                group.timers = timersList;
               }
-              if (targetTimer.length > 0) {
-                targetTimer.appendTo(droppedDiv);
-              }
-              draggedTimer.appendTo(droppedOnDiv);
               // console.log(timers.find(timer => timer == draggedTimer[0].id));
             }
           }
