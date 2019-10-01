@@ -57,44 +57,58 @@
           snapTolerance: 32,
           revert: "invalid"
         });
-
         $(".timerContainer").droppable({
           hoverClass: "ui-state-highlight",
+          over: function(event, ui) {
+            let targetParentId = $(this)
+              .parents(".group")
+              .attr("id");
+            let draggedDivParentId = $(ui.draggable)
+              .parents(".group")
+              .attr("id");
+            if (targetParentId != draggedDivParentId) {
+              if ($(this).attr("id") != "placeholder") {
+                $(this).removeClass("ui-state-highlight");
+              }
+            }
+          },
           drop: function(event, ui) {
             let listToAppend = $(this).parents(".timersList");
             let droppedDiv = $(ui.draggable);
             let droppedOnDiv = $(this);
-            let droppedOnDivParent = $(this)
+            let droppedOnDivParentId = $(this)
               .parents(".group")
               .attr("id");
 
-            let droppedDivParent = $(ui.draggable)
+            let droppedDivParentId = $(ui.draggable)
               .parents(".group")
               .attr("id");
             var targetTimer = droppedOnDiv.children(), //original drop children
               draggedTimer = droppedDiv.children(); //original drag children
-            // console.log("dropped on Parent", droppedOnDivParent);
-            console.log("Dropped Div Parent", droppedDivParent);
-            if (droppedOnDivParent != droppedDivParent) {
-              //if droppedOnDiv is placeholder then append before
+
+            // if target and dragged timer are not of same group
+            if (droppedOnDivParentId != droppedDivParentId) {
+              //if droppedOnDiv is placeholder then append before otherwise revert
               if (droppedOnDiv.attr("id") == "placeholder") {
+                //apend before target div
                 droppedOnDiv.before(droppedDiv);
+              } else {
+                $(ui.draggable).draggable({ revert: "valid" });
+              }
+            } else {
+              //same group
+              //stop exchanging placeholder and other div
+              if (droppedOnDiv.attr("id") == "placeholder") {
                 return;
               }
-
-              // alert("coming from different group list");
-              droppedDiv.appendTo(listToAppend);
-              return;
+              if (targetTimer.length > 0) {
+                targetTimer.appendTo(droppedDiv);
+              }
+              draggedTimer.appendTo(droppedOnDiv);
+              // console.log(timers.find(timer => timer == draggedTimer[0].id));
             }
-            if (targetTimer.length > 0) {
-              targetTimer.appendTo(droppedDiv);
-            }
-            console.log(draggedTimer);
-            draggedTimer.appendTo(droppedOnDiv);
-            console.log(timers.find(timer => timer == draggedTimer[0].id));
           }
         });
-
         $(".group").draggable({
           stop: function(event, ui) {
             if (isOverlap(event, ui)) {
@@ -108,12 +122,11 @@
           handles: "se,e",
           ghost: true,
           autoHide: true,
-
+          minWidth: 150,
           stop: function(event, ui) {
             $(this).css("height", getHeight(event, ui));
             $(this).css("max-width", getMaxWidth(event, ui));
             $(this).css("width", getWidth(event, ui));
-            console.log(ui.element.context.children[0].children[1].children);
             // if (isOverlap(event, ui)) {
             //   $(this).animate(ui.originalPosition, "slow");
             //   return;
@@ -155,6 +168,12 @@
           // console.log(ui);
           return ui.element.context.childNodes[1].clientHeight;
         }
+        $(".group")
+          .find(".timersList")
+          .children()
+          .one("DOMNodeRemoved", function() {
+            console.log($(this).parents(".group"));
+          });
 
         function getWidth(event, ui) {
           // let oldWidth = +ui.originalSize.width;
@@ -172,8 +191,11 @@
           return newWidth;
         }
         function getMaxWidth(event, ui) {
-          let childs =
-            ui.element.context.childNodes[1].childNodes[3].childElementCount;
+          console.log(ui.element);
+          let childs = $("#" + ui.element[0].id)
+            .find(".timersList")
+            .children()
+            .size();
           let width = childs * 150 + 10;
           return width;
         }
@@ -181,48 +203,23 @@
     </script>
   </head>
   <body>
-    <div class="row">
-      <div id="1" class="group" class="ui-widget-content">
-        <div class="bg-info">
-          <h3 class="groupHeader ui-widget-header d-flex align-items-start">
-            Group 1
-          </h3>
-          <div class="timersList d-flex flex-wrap">
-            <div id="Awrapper" class="p-0 timerContainer">
-              <p class="timer p-5 m-0 border border-dark" id="A">
-                A
-              </p>
-            </div>
-            <div id="BWrapper" class="p-0 timerContainer">
-              <p class="timer p-5 m-0 border border-dark" id="B">
-                B
-              </p>
-            </div>
-            <div class=" p-0 timerContainer">
-              <p class="timer p-5 m-0 border border-dark" id="C">
-                C
-              </p>
-            </div>
-            <div class=" p-0 timerContainer">
-              <p class="timer p-5 m-0 border border-dark" id="D">
-                D
-              </p>
+    <div class="container">
+      <div class="row">
+        <div id="1" class="group card" class="ui-widget-content">
+          <div class="card">
+            <div class="card-header">
+              <h3>
+                Group 1
+              </h3>
             </div>
           </div>
-        </div>
-      </div>
-      <div id="3" class="group" class="ui-widget-content">
-        <div class="bg-info">
-          <h3 class="groupHeader ui-widget-header d-flex align-items-start">
-            Group 3
-          </h3>
-          <div class="timersList d-flex flex-wrap">
-            <div id="Awrapper" class="p-0 timerContainer">
+          <div class="timersList card-body p-0 d-flex flex-wrap">
+            <div class="p-0 timerContainer">
               <p class="timer p-5 m-0 border border-dark" id="A">
                 A
               </p>
             </div>
-            <div id="BWrapper" class="p-0 timerContainer">
+            <div class="p-0 timerContainer">
               <p class="timer p-5 m-0 border border-dark" id="B">
                 B
               </p>
@@ -238,7 +235,42 @@
               </p>
             </div>
             <div class="  timerContainer" id="placeholder">
-              <p class="timer placeholder m-0 border border-dark ">
+              <p class=" timer p-5 m-0 border border-dark ">
+                <button><i class="fa fa-plus"></i> Add Timer</button>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div id="3" class="group card" class="ui-widget-content">
+          <div class="card-header">
+            <h3>
+              Group 3
+            </h3>
+          </div>
+
+          <div class="timersList d-flex flex-wrap">
+            <div class="p-0 timerContainer">
+              <p class="timer p-5 m-0 border border-dark" id="A">
+                A
+              </p>
+            </div>
+            <div class="p-0 timerContainer">
+              <p class="timer p-5 m-0 border border-dark" id="B">
+                B
+              </p>
+            </div>
+            <div class=" p-0 timerContainer">
+              <p class="timer p-5 m-0 border border-dark" id="C">
+                C
+              </p>
+            </div>
+            <div class=" p-0 timerContainer">
+              <p class="timer p-5 m-0 border border-dark" id="D">
+                D
+              </p>
+            </div>
+            <div class="  timerContainer" id="placeholder">
+              <p class=" timer p-5 m-0 border border-dark ">
                 <button><i class="fa fa-plus"></i> Add Timer</button>
               </p>
             </div>

@@ -39,6 +39,55 @@
 
     <script>
       $(function() {
+        let groups = [
+          {
+            label: "Group 1",
+            left: 400,
+            top: 500,
+            width: 310,
+            height: 310,
+            timers: [1, 2, 3]
+          }
+        ];
+
+        groups.forEach(group => {
+          let resizable = document.createElement("div");
+          resizable.setAttribute(
+            "class",
+            "bg-info resizable ui-widget-content"
+          );
+          resizable.setAttribute(
+            "style",
+            `top: ${group.top}px;
+            left:${group.left}px;
+              width: ${group.width}px;
+              height: ${group.height}px;`
+          );
+          let groupDiv = document.createElement("div");
+          groupDiv.setAttribute("class", "group");
+          resizable.appendChild(groupDiv);
+          let groupHeader = document.createElement("h3");
+          groupHeader.setAttribute("class", "ui-widget-header");
+          groupHeader.innerText = "" + group.label;
+          groupDiv.appendChild(groupHeader);
+          let timersContainer = document.createElement("div");
+          timersContainer.classList = "d-flex flex-wrap";
+          groupDiv.appendChild(timersContainer);
+          $("body").append(resizable);
+        });
+        // <h3 class="ui-widget-header">Resizable</h3>
+        //     <div class="d-flex flex-wrap">
+        //       <div class="p-5 timer border border-dark">dhcd</div>
+        //       <div class="p-5 timer border border-dark">dhcd</div>
+        //       <div class="p-5 timer border border-dark">dhcd</div>
+        //       <div class="p-5 timer border border-dark">dhcd</div>
+        //     </div>
+        // $("#createGroup").on("click", createGroup());
+        // function createGroup() {
+        //   let groupPosition = `top: 100px;left:10;
+        //       width: 310px;
+        //       height: 100px;`;
+        // }
         $(".resizable").draggable({
           stop: function(event, ui) {
             if (isOverlap(event, ui)) {
@@ -118,40 +167,46 @@
     </script>
   </head>
   <body>
-    <div class="row">
-      <div id="elem1" class="resizable" class="ui-widget-content">
-        <div class="group shaukat">
-          <h3 class="ui-widget-header">Resizable</h3>
-          <div class="d-flex flex-wrap">
-            <div class="p-5 timer border border-dark">dhcd</div>
-            <div class="p-5 timer border border-dark">dhcd</div>
-            <div class="p-5 timer border border-dark">dhcd</div>
-            <div class="p-5 timer border border-dark">dhcd</div>
+    <!-- <div class="cotainer">
+      <div class="row p-3">
+        <button class="btn btn-info">Create Group</button>
+      </div>
+
+      <div class="row p-3">
+        <div id="elem1" class="resizable" class="ui-widget-content">
+          <div class="group shaukat">
+            <h3 class="ui-widget-header">Resizable</h3>
+            <div class="d-flex flex-wrap">
+              <div class="p-5 timer border border-dark">dhcd</div>
+              <div class="p-5 timer border border-dark">dhcd</div>
+              <div class="p-5 timer border border-dark">dhcd</div>
+              <div class="p-5 timer border border-dark">dhcd</div>
+            </div>
+          </div>
+        </div>
+        <div id="elem2" class="resizable" class="ui-widget-content">
+          <div class="bg-info group">
+            <h3 class="ui-widget-header">Resizable</h3>
+            <div class="d-flex flex-wrap">
+              <div class="p-5 timer border border-dark">dhcd</div>
+              <div class="p-5 timer border border-dark">dhcd</div>
+              <div class="p-5 timer border border-dark">dhcd</div>
+              <div class="p-5 timer border border-dark">dhcd</div>
+            </div>
+          </div>
+        </div>
+        <div id="elem3" class="resizable" class="ui-widget-content">
+          <div class="bg-info group">
+            <h3 class="ui-widget-header">Resizable</h3>
+            <div class="d-flex flex-wrap">
+              <div class="p-5 timer border border-dark">dhcd</div>
+              <div class="p-5 timer border border-dark">dhcd</div>
+              <div class="p-5 timer border border-dark">dhcd</div>
+              <div class="p-5 timer border border-dark">dhcd</div>
+            </div>
           </div>
         </div>
       </div>
-      <div id="elem2" class="resizable" class="ui-widget-content">
-        <div class="bg-info group">
-          <h3 class="ui-widget-header">Resizable</h3>
-          <div class="d-flex flex-wrap">
-            <div class="p-5 timer border border-dark">dhcd</div>
-            <div class="p-5 timer border border-dark">dhcd</div>
-            <div class="p-5 timer border border-dark">dhcd</div>
-            <div class="p-5 timer border border-dark">dhcd</div>
-          </div>
-        </div>
-      </div>
-      <div id="elem3" class="resizable" class="ui-widget-content">
-        <div class="bg-info group">
-          <h3 class="ui-widget-header">Resizable</h3>
-          <div class="d-flex flex-wrap">
-            <div class="p-5 timer border border-dark">dhcd</div>
-            <div class="p-5 timer border border-dark">dhcd</div>
-            <div class="p-5 timer border border-dark">dhcd</div>
-            <div class="p-5 timer border border-dark">dhcd</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </div> -->
   </body>
 </html>
