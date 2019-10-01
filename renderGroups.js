@@ -3,11 +3,6 @@ function renderGroups(groups, timers) {
     let groupDiv = document.createElement("div");
     groupDiv.classList = "group card ui-widget-content";
     groupDiv.id = group.id;
-    groupDiv.setAttribute(
-      "style",
-      `position:"absolute"; top: "${group.position.top}px";left:"${group.position.left}px"; width: "${group.width}px"; height: "${group.height}px";`
-    );
-    // groupDiv.style = `position:absolute; top: ${group.position.top}px;left:${group.position.left}px; width: ${group.width}px; height: ${group.height}px;`;
 
     let groupHeader = document.createElement("div");
     groupHeader.setAttribute("class", "card-header");
@@ -32,32 +27,11 @@ function renderGroups(groups, timers) {
                 <button class="addTimer btn btn-info btn-sm rounded-pill" ><i class="fa fa-plus"></i> Add Timer</button>
               </p>`;
     timersList.appendChild(placeholder);
-    $("body").append(groupDiv);
+    $(".container .row").append(groupDiv);
     let newHeight = getGroupHeight($("#" + group.id));
-
-    groupDiv.style = `height:${newHeight};`;
+    groupDiv.setAttribute(
+      "style",
+      `position:absolute; top: ${group.top}px;left:${group.left}px; width: ${group.width}px; height: ${newHeight}px;`
+    );
   });
-}
-
-function getGroupHeight(group) {
-  return (
-    group.find(".card-header").outerHeight() +
-    group.find(".timersList").outerHeight()
-  );
-}
-
-function getGroupWidth(event, ui) {
-  // let oldWidth = +ui.originalSize.width;
-  let newWidth = +ui.size.width;
-  let noOfTimers = Math.floor(newWidth / 150);
-  return noOfTimers * 150 + 10 + "px";
-}
-
-function getMaxWidth(event, ui) {
-  let childs = $("#" + ui.element[0].id)
-    .find(".timersList")
-    .children()
-    .size();
-  let width = childs * 150 + 10;
-  return width;
 }

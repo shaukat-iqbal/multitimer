@@ -2,7 +2,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>jQuery UI Resizable - Default functionality</title>
+    <title>Multi Timer</title>
     <script
       src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
@@ -18,8 +18,6 @@
       href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
       rel="stylesheet"
     />
-    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
     <link
       href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
       rel="stylesheet"
@@ -27,6 +25,8 @@
       crossorigin="anonymous"
     />
 
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <style>
       .group {
         width: 310px;
@@ -47,83 +47,12 @@
       }
     </style>
 
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="./data.js"></script>
+    <script src="./renderGroups.js"></script>
+    <script src="./helper.js"></script>
     <script>
       $(function() {
-        let timers = [
-          { id: 1, label: "Timer 1" },
-          { id: 2, label: "Timer 2" },
-          { id: 3, label: "Timer 3" },
-          { id: 4, label: "Timer 4" },
-          { id: 5, label: "Timer 5" }
-        ];
-
-        let groups = [
-          {
-            id: "g1",
-            label: "Group 1",
-            position: { top: 10, left: 100 },
-            width: 310,
-            height: 310,
-            timers: [1, 5, 3]
-          },
-          {
-            id: "g2",
-            label: "Group 2",
-            position: { top: 100, left: 360 },
-            left: 360,
-            top: 100,
-            width: 310,
-            height: 310,
-            timers: [1, 5, 3]
-          },
-          {
-            id: "g3",
-            label: "Group 3",
-            position: { top: 100, left: 660 },
-
-            width: 310,
-            height: 310,
-            timers: [5, 2, 1]
-          }
-        ];
-
-        //--------rendering all group
-        groups.forEach(group => {
-          let groupDiv = document.createElement("div");
-          groupDiv.classList = "group card ui-widget-content";
-          groupDiv.id = group.id;
-          groupDiv.style = `top: ${group.position.top}px;left:${group.position.left}px; width: ${group.width}px; height: ${group.height}px;`;
-
-          let groupHeader = document.createElement("div");
-          groupHeader.setAttribute("class", "card-header");
-          groupHeader.innerHTML = `<h3>${group.label}</h3>`;
-          groupDiv.appendChild(groupHeader);
-
-          let timersList = document.createElement("div");
-          timersList.classList = "timersList  p-0 d-flex flex-wrap";
-          groupDiv.appendChild(timersList);
-          group.timers.forEach(timerId => {
-            let timerContainer = document.createElement("div");
-            timerContainer.classList = "p-0 timerContainer";
-            let timerObject = timers.find(t => t.id === timerId);
-            timerContainer.innerHTML = `<div class="timer p-5 m-0 border border-dark" id="${timerObject.id}">${timerObject.label}</div>`;
-            timersList.appendChild(timerContainer);
-          });
-          let placeholder = document.createElement("div");
-          placeholder.className = "timerContainer";
-          placeholder.id = "placeholder";
-          placeholder.innerHTML = `<p class=" timer p-3 m-0 border border-dark ">
-                <button class="addTimer btn btn-info btn-sm rounded-pill" ><i class="fa fa-plus"></i> Add Timer</button>
-              </p>`;
-          timersList.appendChild(placeholder);
-          $(".container .row").append(groupDiv);
-          let newHeight = getGroupHeight($("#" + group.id));
-
-          groupDiv.style = `height:${newHeight};`;
-        });
-
+        renderGroups(groups, timers);
         let draggableOptions = {
           cancel: "#placeholder",
           helper: "clone",
@@ -229,6 +158,7 @@
           let newTimer = { id: id, label: "Timer " + id };
           group.timers.push(id);
           timers.push(newTimer);
+
           let timerContainer = document.createElement("div");
           timerContainer.classList =
             "p-0 timerContainer ui-draggable ui-draggable-handle ui-droppable";
@@ -237,8 +167,6 @@
           groupDiv.find("#placeholder").before(timerContainer);
 
           let newHeight = getGroupHeight(groupDiv);
-          // groupDiv.find(".card-header").outerHeight() +
-          // groupDiv.find(".timersList").outerHeight();
           groupDiv.css("height", newHeight);
           groupDiv.find(".timerContainer").droppable(droppableOptions);
           groupDiv.find(".timerContainer").draggable(draggableOptions);
@@ -272,52 +200,6 @@
             $(this).css("width", getGroupWidth(event, ui));
           }
         });
-
-        function checkOverLapping(rect1, rect2) {
-          return !(
-            rect1.right < rect2.left ||
-            rect1.left > rect2.right ||
-            rect1.bottom < rect2.top ||
-            rect1.top > rect2.bottom
-          );
-        }
-
-        function isOverlap(event, ui) {
-          let draggedGroup = ui.helper[0];
-          let draggedRect = draggedGroup.getBoundingClientRect();
-          let draggedId = draggedGroup.id;
-          let allRects = document.getElementsByClassName("group");
-          for (let index = 0; index < allRects.length; index++) {
-            const id = allRects[index].id;
-            if (id == draggedId) continue;
-            const rect = allRects[index].getBoundingClientRect();
-            if (checkOverLapping(rect, draggedRect)) return true;
-          }
-          return false;
-        }
-
-        function getGroupHeight(group) {
-          return (
-            group.find(".card-header").outerHeight() +
-            group.find(".timersList").outerHeight()
-          );
-        }
-
-        function getGroupWidth(event, ui) {
-          // let oldWidth = +ui.originalSize.width;
-          let newWidth = +ui.size.width;
-          let noOfTimers = Math.floor(newWidth / 150);
-          return noOfTimers * 150 + 10 + "px";
-        }
-
-        function getMaxWidth(event, ui) {
-          let childs = $("#" + ui.element[0].id)
-            .find(".timersList")
-            .children()
-            .size();
-          let width = childs * 150 + 10;
-          return width;
-        }
       });
     </script>
   </head>
