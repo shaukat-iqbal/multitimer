@@ -30,8 +30,8 @@ function getGroupHeight(group) {
 function getGroupWidth(event, ui) {
   // let oldWidth = +ui.originalSize.width;
   let newWidth = +ui.size.width;
-  let noOfTimers = Math.floor(newWidth / 150);
-  return noOfTimers * 150 + 10;
+  let noOfTimers = Math.floor(newWidth / timerWidth);
+  return noOfTimers * timerWidth + 10;
 }
 
 function getMaxWidth(event, ui) {
@@ -39,6 +39,6 @@ function getMaxWidth(event, ui) {
     .find(".timersList")
     .children()
     .size();
-  let width = childs * 150 + 10;
+  let width = childs * timerWidth + 10;
   return width;
 }
