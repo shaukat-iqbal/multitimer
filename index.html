@@ -64,6 +64,16 @@
         let droppableOptions = {
           hoverClass: "ui-state-highlight",
           over: function(event, ui) {
+            //If the group is being dragged over then it should not show this highlight class
+            if (
+              $(ui.draggable).attr("id") &&
+              $(ui.draggable)
+                .attr("id")
+                .match(/^g/)
+            ) {
+              $(this).removeClass("ui-state-highlight");
+            }
+
             let targetParentId = $(this)
               .parents(".group")
               .attr("id");
@@ -79,6 +89,11 @@
 
           drop: function(event, ui) {
             let droppedDiv = $(ui.draggable);
+            //If the group div is dropped the just return
+            if (droppedDiv.attr("id") && droppedDiv.attr("id").match(/^g/)) {
+              return;
+            }
+
             let droppedOnDiv = $(this);
             let droppedDivParent = droppedDiv.parents(".group");
             let droppedOnDivParentId = $(this)
