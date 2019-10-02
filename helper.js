@@ -31,7 +31,7 @@ function getGroupWidth(event, ui) {
   // let oldWidth = +ui.originalSize.width;
   let newWidth = +ui.size.width;
   let noOfTimers = Math.floor(newWidth / 150);
-  return noOfTimers * 150 + 10 + "px";
+  return noOfTimers * 150 + 10;
 }
 
 function getMaxWidth(event, ui) {

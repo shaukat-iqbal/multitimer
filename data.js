@@ -10,10 +10,10 @@ var groups = [
   {
     id: "g1",
     label: "Group 1",
-    top: 100,
+    top: 500,
     left: 660,
-    width: 310,
-    height: 310,
+    width: 460,
+    height: 355,
     timers: [1, 5, 3]
   },
   {
@@ -22,7 +22,7 @@ var groups = [
     left: 360,
     top: 100,
     width: 310,
-    height: 310,
+    height: 355,
     timers: [1, 5, 3]
   },
   {
@@ -31,7 +31,7 @@ var groups = [
     top: 100,
     left: 50,
     width: 310,
-    height: 310,
+    height: 355,
     timers: [5, 2, 1]
   }
 ];

@@ -31,7 +31,7 @@ function renderGroups(groups, timers) {
     let newHeight = getGroupHeight($("#" + group.id));
     groupDiv.setAttribute(
       "style",
-      `position:absolute; top: ${group.top}px;left:${group.left}px; width: ${group.width}px; height: ${newHeight}px;`
+      `position:absolute; top: ${group.top}px;left:${group.left}px; width: ${group.width}px; height: ${group.height}px;`
     );
   });
 }
