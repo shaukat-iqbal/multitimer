@@ -47,7 +47,7 @@
       }
 
       body {
-        background-image: url("./Resources/stars.jpg");
+        background-image: url("./Resources/balls.jpg");
         background-attachment: fixed;
         background-size: cover;
       }
@@ -58,6 +58,18 @@
     <script src="./helper.js"></script>
     <script>
       $(function() {
+        function changeImage() {
+          let BackgroundImg = [
+            "./Resources/balls.jpg",
+            "./Resources/stars.jpg",
+            "./Resources/van.jpg"
+          ];
+          let i = Math.floor(Math.random() * BackgroundImg.length);
+          document.body.style.backgroundImage =
+            'url("' + BackgroundImg[i] + '")';
+        }
+        window.setInterval(changeImage, 20000);
+
         renderGroups(groups, timers);
         let draggableOptions = {
           cancel: "#placeholder",
