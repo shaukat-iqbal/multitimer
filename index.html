@@ -32,6 +32,7 @@
         margin-right: 10px;
         margin-bottom: 10px;
       }
+
       body {
         min-width: vw-100;
       }
@@ -41,8 +42,11 @@
         height: 30px;
       }
       .timer {
-        height: 150px;
-        width: 150px;
+        height: 60px;
+        width: 200px;
+      }
+      .timerContainer {
+        padding: 5px;
       }
     </style>
 
@@ -168,16 +172,24 @@
             .parents(".group")
             .attr("id");
           let group = groups.find(g => g.id == groupId);
-          console.log(groupId);
+          let d = new Date();
+          let startedAt = d.getTime();
+          let totalSeconds = 3600;
           let id = timers.length;
-          let newTimer = { id: id, label: "Timer " + id };
+          let newTimer = {
+            id: id,
+            label: "Timer " + id,
+            startedAt: startedAt,
+            totalSeconds: totalSeconds,
+            status: "running"
+          };
           group.timers.push(id);
           timers.push(newTimer);
 
           let timerContainer = document.createElement("div");
-          timerContainer.classList =
-            "p-0 timerContainer ui-draggable ui-draggable-handle ui-droppable";
-          timerContainer.innerHTML = `<div class="timer p-5 m-0 border border-dark" id="${newTimer.id}">${newTimer.label}</div>`;
+          timerContainer.classList = "p-0 timerContainer ";
+          let timerDiv = getTimerDiv(newTimer);
+          timerContainer.append(timerDiv);
           let groupDiv = $("#" + groupId);
           groupDiv.find("#placeholder").before(timerContainer);
 
@@ -209,7 +221,7 @@
           handles: "se,e",
           ghost: true,
           autoHide: true,
-          minWidth: 160,
+          minWidth: 200,
           stop: function(event, ui) {
             let groupId = $(this).attr("id");
             let group = groups.find(g => g.id == groupId);
@@ -221,6 +233,20 @@
             console.log(groups);
           }
         });
+        setInterval(() => {
+          let labels = $(".timer .remainingTime");
+          let labelsArray = labels.toArray();
+          labelsArray.forEach(timer => {
+            if (timer.id == "running") {
+              let time =
+                timer.innerText !== "00:00:00"
+                  ? decrement(timer.innerText)
+                  : timer.innerText;
+              if (time === "00:00:00") return;
+              timer.innerText = time;
+            }
+          });
+        }, 1000);
       });
     </script>
   </head>
