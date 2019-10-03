@@ -54,11 +54,12 @@
         renderGroups(groups, timers);
         let draggableOptions = {
           cancel: "#placeholder",
+          cursor: "move",
           helper: "clone",
           snap: true,
           snapMode: "inner",
           snapTolerance: 32,
-          revert: "invalid"
+          revert: "valid"
         };
 
         let droppableOptions = {
@@ -201,8 +202,6 @@
             let position = $(this).position();
             group.top = position["top"];
             group.left = position["left"];
-
-            console.log(group);
           }
         });
 
