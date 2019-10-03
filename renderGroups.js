@@ -66,7 +66,7 @@ function getTimerDiv(timer) {
 
   let innerHTML = `<div class='rounded-circle p-0 d-flex align-items-center  '><img class='rounded-circle p-0 mr-1' src='./Resources/clock.png' width=50px height=50px/></div>
                 <div class='d-flex flex-column justify-content-center '>
-                    <label class='mb-0' style="font-size:12px">${timer.label}</label>
+                    <label class='mb-0 font-weight-bold ' style="font-size:12px">${timer.label}</label>
                     <label class="remainingTime font-weight-bold text-white mb-0" id=${timer.status}>${timeForLabel}</label>
                 </div>
                 <button class='rounded-circle btn p-0 actionBtn'  onClick="play(${timer.id})">${actionButtonSrc}</button>`;
