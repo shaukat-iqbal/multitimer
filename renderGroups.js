@@ -5,8 +5,11 @@ function renderGroups(groups, timers) {
     groupDiv.id = group.id;
 
     let groupHeader = document.createElement("div");
-    groupHeader.setAttribute("class", "card-header bg-dark p-0 d-inline-block");
-    groupHeader.innerHTML = `<h6 class='p-1 mb-0 text-white'><span><i class="fa fa-bars" aria-hidden="true"></i>${group.label}</span></h6>`;
+    groupHeader.setAttribute(
+      "class",
+      "card-header d-flex bg-dark p-0 d-inline-block"
+    );
+    groupHeader.innerHTML = `<h6 class='p-1 mb-0 text-white mr-auto'><span><i class="fa fa-bars mx-1" aria-hidden="true"></i>${group.label}</span></h6><button class='rounded btn p-1' onClick="createGroup(${group.id})"><i class='fa fa-plus-square'></i></button>`;
     groupDiv.appendChild(groupHeader);
 
     let timersList = document.createElement("div");

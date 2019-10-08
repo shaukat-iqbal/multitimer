@@ -180,7 +180,7 @@
         function clearFields() {
           $("form")
             .find("input")
-            .val(" ");
+            .val("");
         }
 
         // $("#closeModal").on("click", clearFields);
@@ -211,7 +211,6 @@
 
           let duration = hours * 3600 + minutes * 60 + seconds;
           if (type == "edit") {
-            alert(duration);
             updateTimer(timerId, label, duration);
             return;
           }
