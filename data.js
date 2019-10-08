@@ -97,7 +97,7 @@ var groups = [
     label: "Group 1",
     top: 200,
     left: 800,
-    width: 268,
+    width: 250,
     height: 429,
     timers: [1, 5, 3]
   },

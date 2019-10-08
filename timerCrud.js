@@ -44,9 +44,12 @@ function updateTimer(timerId, label, duration) {
 
 function deleteTimer(timerId, groupId) {
   let group = groups.find(g => g.id == groupId);
-  group.timers = group.timers.filter(t => t.id !== timerId);
+  group.timers = group.timers.filter(t => t != timerId);
+  console.log(group.timers);
   timers = timers.filter(t => t.id != timerId);
-  $("#" + timerId).remove();
+  $("#" + timerId)
+    .parent(".timerContainer")
+    .remove();
   let groupDiv = $("#" + groupId);
   groupDiv.css("height", getGroupHeight(groupDiv));
 }

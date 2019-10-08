@@ -17,7 +17,7 @@ function renderGroups(groups, timers) {
     groupDiv.appendChild(timersList);
     group.timers.forEach(timerId => {
       let timerContainer = document.createElement("div");
-      timerContainer.classList = "p-1 timerContainer";
+      timerContainer.classList = "p-1 timerContainer ";
       let timerObject = timers.find(t => t.id === timerId);
       let timerDiv = getTimerDiv(timerObject, group.id);
       timerContainer.append(timerDiv);
@@ -36,9 +36,10 @@ function renderGroups(groups, timers) {
 
 function getPlaceholderDiv() {
   let placeholder = document.createElement("div");
-  placeholder.className = "p-0 timerContainer";
+  placeholder.className =
+    "p-0 timerContainer d-flex justify-content-center align-items-center   rounded border border-dark ";
   placeholder.id = "placeholder";
-  placeholder.innerHTML = `<p class="timer d-flex justify-content-center align-items-center rounded m-0 mt-1 border border-dark ">
+  placeholder.innerHTML = `<p class="timer">
                 <button class="addTimer btn btn-info btn-sm rounded-pill" ><i class="fa fa-plus"></i> Add Timer</button>
               </p>`;
   return placeholder;
@@ -46,7 +47,7 @@ function getPlaceholderDiv() {
 function getTimerDiv(timer, groupId) {
   let timerDiv = document.createElement("div");
   timerDiv.id = timer.id;
-  timerDiv.classList = "timer d-flex  m-0  rounded border border-dark";
+  timerDiv.classList = "timer d-flex m-0 rounded border border-dark";
   let actionButtonSrc = "fa fa-pause fa-2x";
   if (timer.status == "paused") actionButtonSrc = "fa fa-play fa-2x";
   let d = new Date();
