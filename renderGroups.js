@@ -68,9 +68,9 @@ function getTimerDiv(timer, groupId) {
   let duration = parseMillisecondsIntoReadableTime(timer.duration * 1000);
   let innerHTML = `
                 <div class='d-flex flex-column justify-content-start mr-auto '>
-                    <p class='mb-0 p-0 m-0' style="font-size:18px"><strong>${timer.label}</strong></p>
+                    <p class='mb-0 p-0 m-0' style="font-size:12px"><strong>${timer.label}</strong></p>
                     <label class="remainingTime p-0 m-0 font-weight-bold text-white mb-0" id=${timer.status}>${timeForLabel}</label>
-                    <label style="font-size:16px" class='mb-0 duration'>Duration: ${duration}</label>
+                    <label style="font-size:10px" class='mb-0 duration'>Duration: ${duration}</label>
                 </div>
                 <div>
                 <div class=' d-flex rounded bg-secondary mb-1'>
