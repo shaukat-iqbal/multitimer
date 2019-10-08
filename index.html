@@ -244,6 +244,24 @@
           $("form input[name='type']").val("add");
         });
 
+        // $("#addTimerModal").on("show.bs.modal", function(e) {
+        //   console.log(e.relatedTarget);
+        // });
+
+        function addTimerToDom(timer, groupId) {
+          let timerContainer = document.createElement("div");
+          timerContainer.classList = "p-0 timerContainer ";
+          let timerDiv = getTimerDiv(timer, groupId);
+          timerContainer.append(timerDiv);
+          let groupDiv = $("#" + groupId);
+          groupDiv.find("#placeholder").before(timerContainer);
+
+          let newHeight = getGroupHeight(groupDiv);
+          groupDiv.css("height", newHeight);
+          groupDiv.find(".timerContainer").droppable(droppableOptions);
+          groupDiv.find(".timerContainer").draggable(draggableOptions);
+        }
+
         $(".timerContainer").draggable(draggableOptions);
         $(".timerContainer").droppable(droppableOptions);
 
@@ -294,23 +312,6 @@
             }
           });
         }, 1000);
-        // $("#addTimerModal").on("show.bs.modal", function(e) {
-        //   console.log(e.relatedTarget);
-        // });
-
-        function addTimerToDom(timer, groupId) {
-          let timerContainer = document.createElement("div");
-          timerContainer.classList = "p-0 timerContainer ";
-          let timerDiv = getTimerDiv(timer, groupId);
-          timerContainer.append(timerDiv);
-          let groupDiv = $("#" + groupId);
-          groupDiv.find("#placeholder").before(timerContainer);
-
-          let newHeight = getGroupHeight(groupDiv);
-          groupDiv.css("height", newHeight);
-          groupDiv.find(".timerContainer").droppable(droppableOptions);
-          groupDiv.find(".timerContainer").draggable(draggableOptions);
-        }
       });
     </script>
   </head>
