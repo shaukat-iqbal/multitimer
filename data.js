@@ -1,4 +1,5 @@
-var timerWidth = 200;
+var timerWidth = 250;
+var timerHeight = 100;
 
 var timers = [
   {
@@ -96,8 +97,8 @@ var groups = [
     label: "Group 1",
     top: 200,
     left: 800,
-    width: 210,
-    height: 295,
+    width: 268,
+    height: 429,
     timers: [1, 5, 3]
   },
   {
@@ -105,8 +106,8 @@ var groups = [
     label: "Group 2",
     left: 360,
     top: 100,
-    width: 410,
-    height: 175,
+    width: 268,
+    height: 429,
     timers: [2, 4, 9]
   },
   {
@@ -114,8 +115,8 @@ var groups = [
     label: "Group 3",
     top: 100,
     left: 50,
-    width: 210,
-    height: 295,
+    width: 268,
+    height: 429,
     timers: [6, 7, 8]
   }
 ];

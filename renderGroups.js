@@ -9,7 +9,7 @@ function renderGroups(groups, timers) {
       "class",
       "card-header d-flex bg-dark p-0 d-inline-block"
     );
-    groupHeader.innerHTML = `<h6 class='p-1 mb-0 text-white mr-auto'><span><i class="fa fa-bars mx-1" aria-hidden="true"></i>${group.label}</span></h6><button class='rounded btn p-1' onClick="createGroup(${group.id})"><i class='fa fa-plus-square'></i></button>`;
+    groupHeader.innerHTML = `<h6 class='p-1 mb-0 text-white mr-auto'><span><i class="fa fa-bars mx-1" aria-hidden="true"></i>${group.label}</span></h6><button class='r ounded btn p-1' onClick="createGroup(${group.id})"><i class='fa fa-plus-square'></i></button>`;
     groupDiv.appendChild(groupHeader);
 
     let timersList = document.createElement("div");
@@ -17,7 +17,7 @@ function renderGroups(groups, timers) {
     groupDiv.appendChild(timersList);
     group.timers.forEach(timerId => {
       let timerContainer = document.createElement("div");
-      timerContainer.classList = "p-0 timerContainer";
+      timerContainer.classList = "p-1 timerContainer";
       let timerObject = timers.find(t => t.id === timerId);
       let timerDiv = getTimerDiv(timerObject, group.id);
       timerContainer.append(timerDiv);
@@ -46,8 +46,7 @@ function getPlaceholderDiv() {
 function getTimerDiv(timer, groupId) {
   let timerDiv = document.createElement("div");
   timerDiv.id = timer.id;
-  timerDiv.classList =
-    "timer d-flex justify-content-start m-0 mt-1 rounded border border-dark";
+  timerDiv.classList = "timer d-flex  m-0  rounded border border-dark";
   let actionButtonSrc = "fa fa-pause fa-2x";
   if (timer.status == "paused") actionButtonSrc = "fa fa-play fa-2x";
   let d = new Date();
@@ -70,10 +69,10 @@ function getTimerDiv(timer, groupId) {
   }
   let duration = parseMillisecondsIntoReadableTime(timer.duration * 1000);
   let innerHTML = `
-                <div class='d-flex flex-column justify-content-start mr-auto '>
-                    <p class='mb-0 p-0 m-0' style="font-size:12px"><strong>${timer.label}</strong></p>
+                <div class='d-flex flex-column ml-auto mr-auto '>
+                    <p class='mb-0 p-0 m-0 label'><strong>${timer.label}</strong></p>
                     <label class="remainingTime p-0 m-0 font-weight-bold text-white mb-0" id=${timer.status}>${timeForLabel}</label>
-                    <label style="font-size:10px" class='mb-0 duration'>Duration: ${duration}</label>
+                    <label class='mb-0 duration'>Duration: ${duration}</label>
                 </div>
                 <div>
                 <div class=' d-flex rounded bg-secondary mb-1'>
