@@ -90,3 +90,11 @@ function to2digits(n) {
   if (n > 9) return n;
   return "0" + n;
 }
+
+function convertToSeconds(time) {
+  let timeArr = time.split(":");
+  let seconds = parseInt(timeArr[2]);
+  let minutes = parseInt(timeArr[1]);
+  let hours = parseInt(timeArr[0]);
+  return hours * 3600 + minutes * 60 + seconds;
+}
