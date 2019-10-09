@@ -31,7 +31,7 @@ function getGroupWidth(event, ui) {
   // let oldWidth = +ui.originalSize.width;
   let newWidth = +ui.size.width;
   let noOfTimers = Math.floor(newWidth / timerWidth);
-  return noOfTimers * timerWidth + 18;
+  return noOfTimers * timerWidth + 10;
 }
 
 function getMaxWidth(event, ui) {
@@ -89,4 +89,17 @@ function decrement(time) {
 function to2digits(n) {
   if (n > 9) return n;
   return "0" + n;
+}
+
+function convertToSeconds(time) {
+  let timeArr = time.split(":");
+  let seconds = parseInt(timeArr[2]);
+  let minutes = parseInt(timeArr[1]);
+  let hours = parseInt(timeArr[0]);
+  return hours * 3600 + minutes * 60 + seconds;
+}
+function clearFields() {
+  $("form")
+    .find("input")
+    .val("");
 }

@@ -3,6 +3,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Multi Timer</title>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script
       src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
@@ -24,10 +28,20 @@
       integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
       crossorigin="anonymous"
     />
-
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <style>
+      .duration {
+        font-size: 14px;
+      }
+      .remainingTime {
+        font-size: 26px;
+      }
+      .label {
+        font-size: 18px;
+      }
+      input[type="number"] {
+        width: 50px;
+      }
+
       .group {
         margin-right: 10px;
         margin-bottom: 10px;
@@ -37,13 +51,14 @@
       body {
         min-width: vw-100;
       }
+
       .card-header,
       .card-header h6 {
         opacity: 1;
       }
-      .timer {
-        height: 60px;
-        width: 200px;
+      .timerContainer {
+        height: 100px;
+        width: 250px;
       }
 
       body {
@@ -54,188 +69,85 @@
     </style>
 
     <script src="./data.js"></script>
+    <script src="./options.js"></script>
     <script src="./renderGroups.js"></script>
     <script src="./helper.js"></script>
+    <script src="./timerCrud.js"></script>
+    <script src="./groupCrud.js"></script>
     <script>
       $(function() {
         renderGroups(groups, timers);
-        let draggableOptions = {
-          cancel: "#placeholder",
-          cursor: "move",
-          helper: "clone",
-          snap: true,
-          snapMode: "inner",
-          snapTolerance: 32,
-          revert: "valid"
-        };
 
-        let droppableOptions = {
-          hoverClass: "ui-state-highlight",
-          over: function(event, ui) {
-            //If the group is being dragged over then it should not show this highlight class
-            if (
-              $(ui.draggable).attr("id") &&
-              $(ui.draggable)
-                .attr("id")
-                .match(/^g/)
-            ) {
-              $(this).removeClass("ui-state-highlight");
-            }
-
-            let targetParentId = $(this)
-              .parents(".group")
-              .attr("id");
-            let draggedDivParentId = $(ui.draggable)
-              .parents(".group")
-              .attr("id");
-            if (targetParentId != draggedDivParentId) {
-              if ($(this).attr("id") != "placeholder") {
-                $(this).removeClass("ui-state-highlight");
-              }
-            }
-          },
-
-          drop: function(event, ui) {
-            let droppedDiv = $(ui.draggable);
-            //If the group div is dropped the just return
-            if (droppedDiv.attr("id") && droppedDiv.attr("id").match(/^g/)) {
-              return;
-            }
-
-            let droppedOnDiv = $(this);
-            let droppedDivParent = droppedDiv.parents(".group");
-            let droppedOnDivParentId = $(this)
-              .parents(".group")
-              .attr("id");
-
-            let droppedDivParentId = $(ui.draggable)
-              .parents(".group")
-              .attr("id");
-
-            var targetTimer = droppedOnDiv.children(), //original drop children
-              draggedTimer = droppedDiv.children(); //original drag children
-
-            // if target and dragged timer are not of same group
-            if (droppedOnDivParentId != droppedDivParentId) {
-              //if target is placeholder then append before otherwise revert
-              if (droppedOnDiv.attr("id") == "placeholder") {
-                $(ui.draggable).draggable({ revert: "invalid" });
-                //apend before target div
-                droppedOnDiv.before(droppedDiv);
-
-                // Move the timer to target group
-                let targetGroup = groups.find(
-                  g => g.id == droppedOnDivParentId
-                );
-                let group2 = groups.find(g => g.id == droppedDivParentId);
-
-                targetGroup.timers.push(+draggedTimer.attr("id"));
-                //remove the timer from previous group
-                let indexToRemove = group2.timers.findIndex(
-                  t => t == draggedTimer.attr("id")
-                );
-                group2.timers.splice(indexToRemove, 1);
-                let groupHeight = getGroupHeight($(this).parents(".group"));
-
-                $(this)
-                  .parents(".group")
-                  .css("height", groupHeight);
-
-                droppedDivParent.css(
-                  "height",
-                  getGroupHeight(droppedDivParent)
-                );
-              } else {
-                $(ui.draggable).draggable({ revert: "valid" });
-              }
-            } else {
-              //same group
-              //stop exchanging placeholder and other div
-              if (droppedOnDiv.attr("id") != "placeholder") {
-                if (targetTimer.length > 0) {
-                  targetTimer.appendTo(droppedDiv);
-                }
-                draggedTimer.appendTo(droppedOnDiv);
-                let group = groups.find(g => g.id === droppedDivParentId);
-                timersList = group.timers;
-                let a = timersList.findIndex(t => t == targetTimer.attr("id"));
-                let b = timersList.findIndex(t => t == draggedTimer.attr("id"));
-                let temp = timersList[a];
-                timersList[a] = timersList[b];
-                timersList[b] = temp;
-                group.timers = timersList;
-              }
-              // console.log(timers.find(timer => timer == draggedTimer[0].id));
-            }
-          }
-        };
-
-        $(".addTimer").click(function() {
+        // $("#closeModal").on("click", clearFields);
+        $("form").on("submit", e => {
+          e.preventDefault();
+          let timerId = $(this)
+            .find("input[name='timerId']")
+            .val();
+          let type = $(this)
+            .find("input[name='type']")
+            .val();
           let groupId = $(this)
-            .parents(".group")
-            .attr("id");
+            .find("input[name='groupId']")
+            .val();
+
+          let label = $(this)
+            .find("input[name='label']")
+            .val();
+          let hours = +$(this)
+            .find("input[name='hours']")
+            .val();
+          let minutes = +$(this)
+            .find("input[name='minutes']")
+            .val();
+          let seconds = +$(this)
+            .find("input[name='seconds']")
+            .val();
+
+          let duration = hours * 3600 + minutes * 60 + seconds;
+          if (type == "edit") {
+            updateTimer(timerId, label, duration);
+            return;
+          }
+          //Clear All fiels
+          clearFields();
+          let totalSeconds = duration;
           let group = groups.find(g => g.id == groupId);
           let d = new Date();
           let startedAt = d.getTime();
-          let totalSeconds = 3600;
           let id = timers.length;
           let newTimer = {
             id: id,
-            label: "Timer " + id,
+            label: label,
             startedAt: startedAt,
+            duration: duration,
             totalSeconds: totalSeconds,
             status: "running"
           };
+          console.log(newTimer);
           group.timers.push(id);
           timers.push(newTimer);
+          $("#addTimerModal").modal("hide");
+          addTimerToDom(newTimer, groupId);
+        });
 
-          let timerContainer = document.createElement("div");
-          timerContainer.classList = "p-0 timerContainer ";
-          let timerDiv = getTimerDiv(newTimer);
-          timerContainer.append(timerDiv);
+        function addTimerToDom(timer, groupId) {
           let groupDiv = $("#" + groupId);
-          groupDiv.find("#placeholder").before(timerContainer);
-
+          groupDiv.find("#placeholder").before(getTimerDiv(timer.id, groupId));
           let newHeight = getGroupHeight(groupDiv);
           groupDiv.css("height", newHeight);
           groupDiv.find(".timerContainer").droppable(droppableOptions);
           groupDiv.find(".timerContainer").draggable(draggableOptions);
-        });
+        }
 
         $(".timerContainer").draggable(draggableOptions);
         $(".timerContainer").droppable(droppableOptions);
 
-        $(".group").draggable({
-          cursor: "move",
-          stop: function(event, ui) {
-            if (isOverlap(event, ui)) {
-              $(this).animate(ui.originalPosition, "slow");
-              return;
-            }
-            let id = $(this).attr("id");
-            let group = groups.find(g => g.id == id);
-            let position = $(this).position();
-            group.top = position["top"];
-            group.left = position["left"];
-          }
-        });
+        $(".group").draggable(groupDraggableOptions);
 
-        $(".group").resizable({
-          handles: "se,e",
-          ghost: true,
-          autoHide: true,
-          minWidth: 200,
-          stop: function(event, ui) {
-            let groupId = $(this).attr("id");
-            let group = groups.find(g => g.id == groupId);
-            group.height = getGroupHeight($(ui.element));
-            group.width = getGroupWidth(event, ui);
-            $(this).css("height", group.height + "px");
-            $(this).css("max-width", getMaxWidth(event, ui) + "px");
-            $(this).css("width", group.width + "px");
-            console.log(groups);
-          }
-        });
+        $(".group").resizable(groupResizableOptions);
+
+        //Start Timers
         setInterval(() => {
           let labels = $(".timer .remainingTime");
           let labelsArray = labels.toArray();
@@ -245,7 +157,7 @@
                 timer.innerText !== "00:00:00"
                   ? decrement(timer.innerText)
                   : timer.innerText;
-              if (time === "00:00:00") return;
+              // if (time === "00:00:00") return;
               timer.innerText = time;
             }
           });
@@ -254,8 +166,75 @@
     </script>
   </head>
   <body>
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="addTimerModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title p-0 m-0" id="exampleModalLongTitle">
+              Timer Setting
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form action="#">
+            <div class="modal-body">
+              <input type="hidden" name="type" />
+              <input type="hidden" name="groupId" />
+              <input type="hidden" name="timerId" />
+              <div>
+                <label>Description</label><br />
+                <input type="text" name="label" minlength="2" required />
+              </div>
+
+              <label>Duration</label>
+              <br />
+              <div class="d-inline-block">
+                <input type="number" min="0" name="hours" /><br />
+                <label>Hours</label>
+              </div>
+              <div class="d-inline-block">
+                <input type="number" min="0" max="60" name="minutes" /><br />
+                <label>Mins</label>
+              </div>
+              <div class="d-inline-block">
+                <input type="number" min="0" max="60" name="seconds" /><br />
+                <label>Secs</label>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                id="closeModal"
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+              >
+                Close
+              </button>
+              <button type="submit" class="btn btn-primary">
+                Save changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
     <div class="container">
       <div class="row"></div>
     </div>
+    <!-- Button trigger modal -->
   </body>
 </html>
