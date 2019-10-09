@@ -1,49 +1,54 @@
 function renderGroups(groups, timers) {
-  groups.forEach(group => {
-    let groupDiv = document.createElement("div");
-    groupDiv.classList = "group card ";
-    groupDiv.id = group.id;
-
-    let groupHeader = document.createElement("div");
-    groupHeader.setAttribute(
-      "class",
-      "card-header d-flex bg-dark p-0 d-inline-block"
-    );
-    groupHeader.innerHTML = `<h6 class='p-1 mb-0 text-white mr-auto'><span><i class="fa fa-bars mx-1" aria-hidden="true"></i>${group.label}</span></h6><button class='r ounded btn p-1' onClick="createGroup(${group.id})"><i class='fa fa-plus-square'></i></button>`;
-    groupDiv.appendChild(groupHeader);
-
-    let timersList = document.createElement("div");
-    timersList.classList = "timersList d-flex flex-wrap";
-    groupDiv.appendChild(timersList);
-    group.timers.forEach(timerId => {
-      let timerContainer = document.createElement("div");
-      timerContainer.classList = "p-1 timerContainer ";
-      let timerObject = timers.find(t => t.id === timerId);
-      let timerDiv = getTimerDiv(timerObject, group.id);
-      timerContainer.append(timerDiv);
-      timersList.appendChild(timerContainer);
-    });
-
-    timersList.appendChild(getPlaceholderDiv());
-    $(".container .row").append(groupDiv);
-    // let newHeight = getGroupHeight($("#" + group.id));
-    groupDiv.setAttribute(
-      "style",
-      `position:absolute; top: ${group.top}px;left:${group.left}px; width: ${group.width}px; height: ${group.height}px;`
-    );
-  });
+  groups.forEach(group => renderSingleGroup(group));
 }
 
-function getPlaceholderDiv() {
+function renderSingleGroup(group) {
+  let groupDiv = document.createElement("div");
+  groupDiv.classList = "group card ";
+  groupDiv.id = group.id;
+  groupDiv.setAttribute(
+    "style",
+    `position:absolute; top: ${group.top}px;left:${group.left}px; width: ${group.width}px; height: ${group.height}px;`
+  );
+  let groupHeader = document.createElement("div");
+  groupHeader.setAttribute(
+    "class",
+    "card-header d-flex bg-dark p-0 d-inline-block"
+  );
+  groupHeader.innerHTML = `<h6 class='p-1 mb-0 text-white mr-auto'>
+    <span><i class="fa fa-bars mx-1" aria-hidden="true"></i>${group.label}</span></h6>
+    <button class='r ounded btn p-1' onClick="createGroupNextTo('${group.id}')"><i class='fa fa-plus-square'></i></button>`;
+  groupDiv.appendChild(groupHeader);
+
+  let timersList = document.createElement("div");
+  timersList.classList = "timersList d-flex flex-wrap";
+  groupDiv.appendChild(timersList);
+  group.timers.forEach(timerId => {
+    let timerContainer = document.createElement("div");
+    timerContainer.classList = "p-1 timerContainer ";
+    let timerObject = timers.find(t => t.id === timerId);
+    let timerDiv = getTimerDiv(timerObject, group.id);
+    timerContainer.append(timerDiv);
+    timersList.appendChild(timerContainer);
+  });
+
+  timersList.appendChild(getPlaceholderDiv(group.id));
+  $(".container .row").append(groupDiv);
+
+  // let newHeight = getGroupHeight($("#" + group.id));
+}
+
+function getPlaceholderDiv(groupId) {
   let placeholder = document.createElement("div");
   placeholder.className =
-    "p-0 timerContainer d-flex justify-content-center align-items-center   rounded border border-dark ";
+    "p-0 timerContainer d-flex justify-content-center align-items-center  rounded border border-dark ";
   placeholder.id = "placeholder";
   placeholder.innerHTML = `<p class="timer">
-                <button class="addTimer btn btn-info btn-sm rounded-pill" ><i class="fa fa-plus"></i> Add Timer</button>
+                <button class="addTimer btn btn-info btn-sm rounded-pill" onClick="addTimer('${groupId}')" ><i class="fa fa-plus"></i> Add Timer</button>
               </p>`;
   return placeholder;
 }
+
 function getTimerDiv(timer, groupId) {
   let timerDiv = document.createElement("div");
   timerDiv.id = timer.id;
