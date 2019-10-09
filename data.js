@@ -93,8 +93,8 @@ var timers = [
 ];
 var groups = [
   {
-    id: "g1",
-    label: "Group 1",
+    id: "g0",
+    label: "Group 0",
     top: 200,
     left: 800,
     width: 250,
@@ -102,8 +102,8 @@ var groups = [
     timers: [1, 5, 3]
   },
   {
-    id: "g2",
-    label: "Group 2",
+    id: "g1",
+    label: "Group 1",
     left: 360,
     top: 100,
     width: 268,
@@ -111,8 +111,8 @@ var groups = [
     timers: [2, 4, 9]
   },
   {
-    id: "g3",
-    label: "Group 3",
+    id: "g2",
+    label: "Group 2",
     top: 100,
     left: 50,
     width: 268,

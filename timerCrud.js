@@ -14,6 +14,18 @@ function editTimer(timerId, groupId) {
   $("#addTimerModal").modal({ backdrop: true });
 }
 
+function addTimer(groupId) {
+  console.log("clicked");
+  clearFields();
+  // let groupId = $(this)
+  //   .parents(".group")
+  //   .attr("id");
+  console.log("group id", groupId);
+  $("#addTimerModal").modal({ backdrop: true });
+  $("form input[name='groupId']").val(groupId);
+  $("form input[name='type']").val("add");
+}
+
 function updateTimer(timerId, label, duration) {
   let timer = timers.find(t => t.id == timerId);
   let olderDuration = +timer.duration;
