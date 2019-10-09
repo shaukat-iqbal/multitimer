@@ -98,3 +98,8 @@ function convertToSeconds(time) {
   let hours = parseInt(timeArr[0]);
   return hours * 3600 + minutes * 60 + seconds;
 }
+function clearFields() {
+  $("form")
+    .find("input")
+    .val("");
+}

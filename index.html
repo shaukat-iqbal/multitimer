@@ -77,116 +77,6 @@
     <script>
       $(function() {
         renderGroups(groups, timers);
-        let draggableOptions = {
-          cancel: "#placeholder",
-          cursor: "move",
-          helper: "clone",
-          snap: true,
-          snapMode: "inner",
-          snapTolerance: 32,
-          revert: "invalid"
-        };
-
-        let droppableOptions = {
-          hoverClass: "ui -state-highlight",
-          over: function(event, ui) {
-            //If the group is being dragged over then it should not show this highlight class
-            if (
-              $(ui.draggable).attr("id") &&
-              $(ui.draggable)
-                .attr("id")
-                .match(/^g/)
-            ) {
-              $(this).removeClass("ui-state-highlight");
-            }
-
-            let targetParentId = $(this)
-              .parents(".group")
-              .attr("id");
-            let draggedDivParentId = $(ui.draggable)
-              .parents(".group")
-              .attr("id");
-            if (targetParentId != draggedDivParentId) {
-              if ($(this).attr("id") != "placeholder") {
-                $(this).removeClass("ui-state-highlight");
-              }
-            }
-          },
-
-          drop: function(event, ui) {
-            let droppedDiv = $(ui.draggable);
-            //If the group div is dropped the just return
-            if (droppedDiv.attr("id") && droppedDiv.attr("id").match(/^g/)) {
-              return;
-            }
-
-            let droppedOnDiv = $(this);
-            let droppedDivParent = droppedDiv.parents(".group");
-            let droppedOnDivParentId = $(this)
-              .parents(".group")
-              .attr("id");
-
-            let droppedDivParentId = $(ui.draggable)
-              .parents(".group")
-              .attr("id");
-
-            var targetTimer = droppedOnDiv.children(), //original drop children
-              draggedTimer = droppedDiv.children(); //original drag children
-
-            // if target and dragged timer are not of same group
-            if (droppedOnDivParentId != droppedDivParentId) {
-              //if target is placeholder then append before otherwise revert
-              if (droppedOnDiv.attr("id") == "placeholder") {
-                $(ui.draggable).draggable({ revert: "invalid" });
-                //apend before target div
-                droppedOnDiv.before(droppedDiv);
-
-                // Move the timer to target group
-                let targetGroup = groups.find(
-                  g => g.id == droppedOnDivParentId
-                );
-                let group2 = groups.find(g => g.id == droppedDivParentId);
-
-                targetGroup.timers.push(+draggedTimer.attr("id"));
-                //remove the timer from previous group
-                let indexToRemove = group2.timers.findIndex(
-                  t => t == draggedTimer.attr("id")
-                );
-                group2.timers.splice(indexToRemove, 1);
-                let groupHeight = getGroupHeight($(this).parents(".group"));
-
-                $(this)
-                  .parents(".group")
-                  .css("height", groupHeight);
-
-                droppedDivParent.css(
-                  "height",
-                  getGroupHeight(droppedDivParent)
-                );
-              } else {
-                $(ui.draggable).draggable({ revert: "valid" });
-              }
-            } else {
-              //same group
-              //stop exchanging placeholder and other div
-              if (droppedOnDiv.attr("id") != "placeholder") {
-                if (targetTimer.length > 0) {
-                  targetTimer.appendTo(droppedDiv);
-                }
-                draggedTimer.appendTo(droppedOnDiv);
-                let group = groups.find(g => g.id === droppedDivParentId);
-                timersList = group.timers;
-                let a = timersList.findIndex(t => t == targetTimer.attr("id"));
-                let b = timersList.findIndex(t => t == draggedTimer.attr("id"));
-                let temp = timersList[a];
-                timersList[a] = timersList[b];
-                timersList[b] = temp;
-                group.timers = timersList;
-              }
-              // console.log(timers.find(timer => timer == draggedTimer[0].id));
-            }
-          }
-        };
 
         // $("#closeModal").on("click", clearFields);
         $("form").on("submit", e => {
@@ -241,30 +131,9 @@
           addTimerToDom(newTimer, groupId);
         });
 
-        // $(".addTimer").click(function() {
-        //   console.log("clicked");
-        //   clearFields();
-        //   let groupId = $(this)
-        //     .parents(".group")
-        //     .attr("id");
-        //   console.log("group id", groupId);
-        //   $("#addTimerModal").modal({ backdrop: true });
-        //   $("form input[name='groupId']").val(groupId);
-        //   $("form input[name='type']").val("add");
-        // });
-
-        // $("#addTimerModal").on("show.bs.modal", function(e) {
-        //   console.log(e.relatedTarget);
-        // });
-
         function addTimerToDom(timer, groupId) {
-          let timerContainer = document.createElement("div");
-          timerContainer.classList = "p-0 timerContainer ";
-          let timerDiv = getTimerDiv(timer, groupId);
-          timerContainer.append(timerDiv);
           let groupDiv = $("#" + groupId);
-          groupDiv.find("#placeholder").before(timerContainer);
-
+          groupDiv.find("#placeholder").before(getTimerDiv(timer.id, groupId));
           let newHeight = getGroupHeight(groupDiv);
           groupDiv.css("height", newHeight);
           groupDiv.find(".timerContainer").droppable(droppableOptions);

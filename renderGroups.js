@@ -15,21 +15,18 @@ function renderSingleGroup(group) {
     "class",
     "card-header d-flex bg-dark p-0 d-inline-block"
   );
-  groupHeader.innerHTML = `<h6 class='p-1 mb-0 text-white mr-auto'>
+  groupHeader.innerHTML = `<h6 class='p-1 mb-0 text-white mr-auto groupHeading' ondblclick="editGroupLabel('${group.id}')" >
     <span><i class="fa fa-bars mx-1" aria-hidden="true"></i>${group.label}</span></h6>
-    <button class='r ounded btn p-1' onClick="createGroupNextTo('${group.id}')"><i class='fa fa-plus-square'></i></button>`;
+    <input type='text' name='groupLabel' class='d-none p-1 mb-0 bg-dark text-white mr-auto' onblur="updateGroupLabel('${group.id}')" value='${group.label}'/>
+    <button class='rounded btn p-1' onClick="deleteGroup('${group.id}')"><i class='fa fa-trash'></i></button>
+    <button class='rounded btn p-1' onClick="createGroupNextTo('${group.id}')"><i class='fa fa-plus-square'></i></button>`;
   groupDiv.appendChild(groupHeader);
 
   let timersList = document.createElement("div");
   timersList.classList = "timersList d-flex flex-wrap";
   groupDiv.appendChild(timersList);
   group.timers.forEach(timerId => {
-    let timerContainer = document.createElement("div");
-    timerContainer.classList = "p-1 timerContainer ";
-    let timerObject = timers.find(t => t.id === timerId);
-    let timerDiv = getTimerDiv(timerObject, group.id);
-    timerContainer.append(timerDiv);
-    timersList.appendChild(timerContainer);
+    timersList.appendChild(getTimerDiv(timerId, group.id));
   });
 
   timersList.appendChild(getPlaceholderDiv(group.id));
@@ -41,15 +38,19 @@ function renderSingleGroup(group) {
 function getPlaceholderDiv(groupId) {
   let placeholder = document.createElement("div");
   placeholder.className =
-    "p-0 timerContainer d-flex justify-content-center align-items-center  rounded border border-dark ";
+    "p-0 timerContainer d-flex justify-content-center align-items-center   ";
   placeholder.id = "placeholder";
-  placeholder.innerHTML = `<p class="timer">
+  placeholder.innerHTML = `<p class="timer roundedp-3">
                 <button class="addTimer btn btn-info btn-sm rounded-pill" onClick="addTimer('${groupId}')" ><i class="fa fa-plus"></i> Add Timer</button>
               </p>`;
   return placeholder;
 }
 
-function getTimerDiv(timer, groupId) {
+function getTimerDiv(timerId, groupId) {
+  let timerContainer = document.createElement("div");
+  timerContainer.classList = "p-1 timerContainer ";
+  let timer = timers.find(t => t.id === timerId);
+
   let timerDiv = document.createElement("div");
   timerDiv.id = timer.id;
   timerDiv.classList = "timer d-flex m-0 rounded border border-dark";
@@ -87,7 +88,9 @@ function getTimerDiv(timer, groupId) {
   </div>
   <button class='rounded-circle btn p-0 px-2 actionBtn' onClick="play(${timer.id})"><i class='${actionButtonSrc}'></i></button></div>`;
   timerDiv.innerHTML = innerHTML;
-  return timerDiv;
+  // return timerDiv;
+  timerContainer.append(timerDiv);
+  return timerContainer;
 }
 
 function play(id) {

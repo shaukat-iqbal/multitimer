@@ -15,12 +15,9 @@ function editTimer(timerId, groupId) {
 }
 
 function addTimer(groupId) {
-  console.log("clicked");
+  let d=new Date();
+  console.log(d.getTime());
   clearFields();
-  // let groupId = $(this)
-  //   .parents(".group")
-  //   .attr("id");
-  console.log("group id", groupId);
   $("#addTimerModal").modal({ backdrop: true });
   $("form input[name='groupId']").val(groupId);
   $("form input[name='type']").val("add");
