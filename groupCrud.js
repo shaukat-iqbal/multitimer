@@ -21,26 +21,32 @@ function createGroupNextTo(groupId) {
 }
 
 function deleteGroup(groupId) {
-  groups = groups.filter(g => g.id != groupId);
-  $(`#${groupId}`).remove();
-  console.log(groups);
+  if (confirm("do you want to do this?")) {
+    groups = groups.filter(g => g.id != groupId);
+    $(`#${groupId}`).remove();
+    console.log(groups);
+  }
 }
 
-function updateGroupLabel(groupId){
-    let input=$(`#${groupId}`).find("input[name='groupLabel']");
-let val=input.val();
-group=groups.find(g=>g.id==groupId);
-group.label=val;
-input.addClass("d-none");
-$(`#${groupId}`).find(".groupHeading span").html(`<i class="fa fa-bars mx-1" aria-hidden="true"></i>${group.label}`);
-$(`#${groupId}`).find(".groupHeading").removeClass("d-none");
-console.log(val,groups);
+function updateGroupLabel(groupId) {
+  let input = $(`#${groupId}`).find("input[name='groupLabel']");
+  let val = input.val();
+  group = groups.find(g => g.id == groupId);
+  group.label = val;
+  input.addClass("d-none");
+  $(`#${groupId}`)
+    .find(".groupHeading span")
+    .html(`<i class="fa fa-bars mx-1" aria-hidden="true"></i>${group.label}`);
+  $(`#${groupId}`)
+    .find(".groupHeading")
+    .removeClass("d-none");
+  console.log(val, groups);
 }
 
-function editGroupLabel(groupId){
-    let groupDiv = $(`#${groupId}`);
-    groupDiv.find(".groupHeading").addClass("d-none");
-    let input = groupDiv.find("input[name='groupLabel']");
-    input.removeClass("d-none");
-    input.focus();
+function editGroupLabel(groupId) {
+  let groupDiv = $(`#${groupId}`);
+  groupDiv.find(".groupHeading").addClass("d-none");
+  let input = groupDiv.find("input[name='groupLabel']");
+  input.removeClass("d-none");
+  input.focus();
 }
