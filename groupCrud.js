@@ -21,7 +21,8 @@ function createGroupNextTo(groupId) {
 }
 
 function deleteGroup(groupId) {
-  if (confirm("do you want to do this?")) {
+  let group = groups.find(g => g.id == groupId);
+  if (confirm("Do you want to delete the group:" + group.label)) {
     groups = groups.filter(g => g.id != groupId);
     $(`#${groupId}`).remove();
     console.log(groups);

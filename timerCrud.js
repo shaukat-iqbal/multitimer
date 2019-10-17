@@ -46,13 +46,14 @@ function updateTimer(timerId, label, duration) {
   timerLabel.attr("id", timer.status);
   $("#" + timerId)
     .find(".duration")
-    .html(parseMillisecondsIntoReadableTime(duration * 1000));
+    .html("Duration: " + parseMillisecondsIntoReadableTime(duration * 1000));
 
   $("#addTimerModal").modal("hide");
 }
 
 function deleteTimer(timerId, groupId) {
-  if (confirm("do you want to do this?")) {
+  let timer = timers.find(t => t.id == timerId);
+  if (confirm("Do you want to delete the Timer:" + timer.label)) {
     let group = groups.find(g => g.id == groupId);
     group.timers = group.timers.filter(t => t != timerId);
     console.log(group.timers);
