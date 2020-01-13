@@ -53,6 +53,7 @@ function updateTimer(timerId, label, duration) {
 
 function deleteTimer(timerId, groupId) {
   let timer = timers.find(t => t.id == timerId);
+  if(!timer){alert("Timer Not valid"); return;};
   if (confirm("Do you want to delete the Timer:" + timer.label)) {
     let group = groups.find(g => g.id == groupId);
     group.timers = group.timers.filter(t => t != timerId);
